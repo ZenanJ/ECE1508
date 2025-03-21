@@ -3,9 +3,9 @@ import numpy as np
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
+from sentence_transformers import SentenceTransformer
 import faiss
 import torch
-from nltk.book import texts
 from sklearn.preprocessing import MinMaxScaler
 import os
 
@@ -16,7 +16,7 @@ ratings_df = pd.read_csv("../../movielens_data/raw/ratings.csv")  # userId, movi
 tags_df = pd.read_csv("../..//movielens_data/raw/tags.csv")  # userId, movieId, tag, timestamp
 
 save_path = "../../movielens_data/processed/processed_movies.csv"
-embedding_save_path = "../../movielens_data/processed"
+embedding_save_path = "../../movielens_data/processed/movielens_hybrid.index"
 
 
 def preprocess_data(movies_df, ratings_df, tags_df, save_path):
@@ -59,20 +59,16 @@ def generate_text_embeddings(processed_movies_df):
     print(f"Using device {model_device['device']}")
 
     # Load embedding model
-    embeddings_model = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-mpnet-base-v2",
-    model_kwargs = model_device,
-    encode_kwargs = {'normalize_embeddings': False}
-    )
+    model = SentenceTransformer("all-MiniLM-L6-v2")
 
     # Generate text embeddings
-    print("It's generating the text embeddings on processed_movies_df[\"text\"] column, and this may take long time")
-    text_embeddings = embeddings_model.embed_documents(processed_movies_df["text"].tolist())
+    text_embeddings = model.encode(processed_movies_df["text"].tolist(), batch_size=64, show_progress_bar=True)
     return text_embeddings
 
 
 # this method normalize and append the numerical rating values to the text embeddings
 def append_numerical_features(processed_movies_df, text_embeddings):
+    print("Currently normalizing the rating values and add to text embeddings")
     # Select numerical columns
     numeric_features = processed_movies_df[["avg_rating", "num_ratings"]].values
 
@@ -91,23 +87,35 @@ def append_numerical_features(processed_movies_df, text_embeddings):
     return hybrid_embeddings
 
 
+def store_embeddings(hybrid_embeddings, embedding_save_path):
+    print("Currently storing the hybrid embeddings")
+    # Define FAISS index (L2 distance)
+    embedding_dimension = hybrid_embeddings.shape[1]
+    index = faiss.IndexFlatL2(embedding_dimension)
+
+    # Add embeddings to FAISS index
+    index.add(hybrid_embeddings)
+
+    # Save FAISS index
+    faiss.write_index(index, embedding_save_path)
+    return index
+
 if __name__ == "__main__":
     # preprocess data and save it (this may take very long time)
     if not os.path.exists(save_path):
         print("It's processing the data currently, and may take very long time dur to large file size")
         preprocess_data(movies_df, ratings_df, tags_df, save_path)
 
-    processed_movies_df = pd.read_csv(save_path)
-    # generate text embeddings based on the "text" column
-    text_embedding = generate_text_embeddings(processed_movies_df[:10])
-    print(f"Text embedding examples: {text_embedding[:10]}")
+    if not os.path.exists(embedding_save_path):
+        processed_movies_df = pd.read_csv(save_path)
+        # generate text embeddings based on the "text" column
+        text_embedding = generate_text_embeddings(processed_movies_df)
+        # print(f"Text embedding examples: {text_embedding}")
 
-    # also add the numerical rating values to embeddings
-    # hybrid_embedding = append_numerical_features(processed_movies_df[:10], text_embedding)
-    # print("Hybrid embedding examples: ", hybrid_embedding)
+        # also add the numerical rating values to embeddings
+        hybrid_embedding = append_numerical_features(processed_movies_df, text_embedding)
+        # print(f"Hybrid embedding examples: ", {hybrid_embedding})
 
-    # Initialize FAISS index with LangChain
-    # vectorstore = FAISS.from_embeddings(embedding=hybrid_embedding, texts=processed_movies_df["movieId"].astype(str).tolist())
-    #
-    # # Save FAISS index to disk
-    # vectorstore.save_local(embedding_save_path, "faiss_movie_embeddings")
+        # Initialize FAISS index and save locally
+        index = store_embeddings(hybrid_embedding, embedding_save_path)
+        print("The embedding index successfully save within movielens_data/processed folder")
