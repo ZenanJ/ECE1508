@@ -5,3 +5,9 @@ faiss-gpu>=1.9.0
 langchain>=0.1.0
 openai>=1.0.0
 gradio>=5.11.0  # For building web UIs
+
+faiss~=1.9.0
+faiss-cpu~=1.10.0
+scikit-learn~=1.6.1
+torch~=2.5.1+cu118
+langchain-community~=0.3.20
