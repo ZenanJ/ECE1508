@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
 from sentence_transformers import SentenceTransformer
@@ -11,12 +11,12 @@ import os
 
 
 # Load CSV files
-movies_df = pd.read_csv("../../movielens_data/raw/movies.csv")  # movieId, title, genres
-ratings_df = pd.read_csv("../../movielens_data/raw/ratings.csv")  # userId, movieId, rating, timestamp
-tags_df = pd.read_csv("../..//movielens_data/raw/tags.csv")  # userId, movieId, tag, timestamp
+movies_df = pd.read_csv("movielens_data/raw/movies.csv")  # movieId, title, genres
+ratings_df = pd.read_csv("movielens_data/raw/ratings.csv")  # userId, movieId, rating, timestamp
+tags_df = pd.read_csv("movielens_data/raw/tags.csv")  # userId, movieId, tag, timestamp
 
-save_path = "../../movielens_data/processed/processed_movies.csv"
-embedding_save_path = "../../movielens_data/processed/movielens_hybrid.index"
+save_path = "movielens_data/processed/processed_movies.csv"
+embedding_save_path = "movielens_data/processed/movielens_hybrid.index"
 
 
 def preprocess_data(movies_df, ratings_df, tags_df, save_path):
