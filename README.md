@@ -22,12 +22,24 @@ pip install -r requirements.txt
 ## Configuration
 Modify `src/utils/config.py` to update hyperparameters, API keys, and retrieval settings.
 
-## Usage
-### Running the gradio server
+Create `.env` file based on the `.env.sample` file content.
 ```bash
-python src/app.py
+cp .env.sample .env
+```
+And input your API secret key in the `.env` file.
+
+
+## Usage
+### Run in Gradio UI mode
+```bash
+python src/app.py --mode ui --model remote
 ```
 The chatbot interface will be available at `http://localhost:7860`.
+
+### Run in command-line mode
+```bash
+python src/app.py --mode cli --model remote
+```
 
 ## Repository Structure
 ```
@@ -53,3 +65,10 @@ Run unit tests with:
 ```bash
 pytest tests/
 ```
+
+## Examples
+### Gradio Chatbot Interface
+<img src="images/gradio_ui_example.png" alt="Gradio Interface">
+
+### Retrieved Results Directly from FAISS vectorDB
+<img src="images/retriever_examples.png" alt="">

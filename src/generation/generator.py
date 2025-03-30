@@ -1,36 +1,33 @@
 import os
 from dotenv import load_dotenv
 from langchain_community.chat_models import ChatOllama
-from retrieval.retriever import Retriever
 from langchain_deepseek import ChatDeepSeek
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
-from retrieval.retriever import Retriever
-from generation.prompt_templates import PromptTemplates
+from src.retrieval.retriever import Retriever
+from src.generation.prompt_templates import PromptTemplates
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain.tools import Tool
-from utils.config import DEEPSEEK_API_KEY, LOCAL_MODEL_NAME
+from src.utils.config import DEEPSEEK_API_KEY, LOCAL_MODEL_NAME
 
  
 class Generator:
-    def __init__(self):
+    def __init__(self, model_choice="remote"):
         
         # Load environment variables
-        load_dotenv()  
-        
-        # Ask user to choose between local or remote model
-        print("Choose between local or remote model:")
-        print("1. Local")
-        print("2. Remote")
-        choice = input("Enter 1 or 2: ")
-        if choice == "1":
-            self.llm = ChatOllama(model=LOCAL_MODEL_NAME).bind_tools([Retriever().search_movie])
-        elif choice == "2":
-            self.llm = ChatDeepSeek(model="deepseek-chat", api_key=DEEPSEEK_API_KEY)
-   
-        # Create the tools list
+        load_dotenv()
+
+        # Set up the LLM based on model choice
         retriever = Retriever()
         
+        # Ask user to choose between local or remote model
+        if model_choice == "local":
+            self.llm = ChatOllama(model=LOCAL_MODEL_NAME).bind_tools([retriever.search_movie])
+        elif model_choice == "remote":
+            self.llm = ChatDeepSeek(model="deepseek-chat", api_key=DEEPSEEK_API_KEY)
+        else:
+            raise ValueError("model_choice must be either 'local' or 'remote'")
+
         # bind the search_movie tool to the llm
         tools = [
             Tool(
