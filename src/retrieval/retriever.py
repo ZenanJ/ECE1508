@@ -5,7 +5,12 @@ from sentence_transformers import SentenceTransformer
 from sklearn.preprocessing import MinMaxScaler
 import os
 from langchain.tools import tool
+import json
+import warnings
 
+# Suppress the specific warning about feature names
+warnings.filterwarnings("ignore", category=UserWarning, 
+                       message="X does not have valid feature names, but MinMaxScaler was fitted with feature names")
 
 class Retriever:
     def __init__(self):
