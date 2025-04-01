@@ -77,10 +77,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Launch Movie Recommendation Assistant")
     parser.add_argument('--mode', choices=['cli', 'ui'], default='ui', help='Mode to run: cli or ui')
     parser.add_argument('--model', choices=['local', 'remote'], default='remote', help="Choose the LLM model, 'local' or 'remote'")
+    parser.add_argument('--llm', choices=['deepseek', 'openai'], default='deepseek', help="Choose the LLM model, 'deepseek' or 'openai'")
     args = parser.parse_args()
     
     # Initialize generator with model choice
-    generator = Generator(model_choice=args.model)
+    generator = Generator(model_choice=args.model, llm_choice=args.llm)
     agent_executor = generator.agent_executor
     
     # Launch the selected mode

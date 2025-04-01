@@ -32,13 +32,13 @@ And input your API secret key in the `.env` file.
 ## Usage
 ### Run in Gradio UI mode
 ```bash
-python src/app.py --mode ui --model remote
+python src/app.py --mode ui --model remote --llm openai
 ```
 The chatbot interface will be available at `http://localhost:7860`.
 
 ### Run in command-line mode
 ```bash
-python src/app.py --mode cli --model remote
+python src/app.py --mode cli --model remote --llm openai
 ```
 
 ## Repository Structure

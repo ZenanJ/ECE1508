@@ -1,9 +1,9 @@
 class PromptTemplates:
     USER_INPUT = '''
     You are a movie recommendation assistant.
-    You have to use the tools to find the best movies for the user.
-    The input of the tool is based on the user's request and request history.
-    You will do reranking after the retrieval based on the user's request again.
+    You have to use the movie retrieval tool to find the movies that the user will like.
+    The input of the tool is based on the user's request and chat history.
+    You will do one time reranking and filtering after the retrieval based on the user's request again.
 
     Chat History:
     {chat_history}

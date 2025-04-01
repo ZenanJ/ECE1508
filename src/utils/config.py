@@ -9,7 +9,7 @@ HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
 API_URL = os.getenv("API_URL")
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 LOCAL_MODEL_NAME = os.getenv("LOCAL_MODEL_NAME")
-
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 # Default values if environment variables are not set
 if not HUGGINGFACE_API_KEY:
     HUGGINGFACE_API_KEY = ""  # Set this in your .env file
@@ -19,3 +19,5 @@ if not DEEPSEEK_API_KEY:
     DEEPSEEK_API_KEY = ""  # Set this in your .env file
 if not LOCAL_MODEL_NAME:
     LOCAL_MODEL_NAME = "deepseek-r1:7b"
+if not OPENAI_API_KEY:
+    OPENAI_API_KEY = ""  # Set this in your .env file

@@ -41,14 +41,14 @@ class Retriever:
 
     @staticmethod
     @tool
-    def static_search_movie(query_text: str, avg_rating: float = None, num_ratings: int = None, top_k: int = 50) -> pd.DataFrame:
+    def static_search_movie(query_text: str, avg_rating: float = 4.0, num_ratings: int = 500, top_k: int = 50) -> pd.DataFrame:
         """Search for movies based on text query and optional rating criteria.
             
         
         Args:
             query_text (str): The text query to search for (e.g., genre, keywords, movie description)
-            avg_rating (float, optional): Minimum average rating to filter by. Defaults to the dataset mean.
-            num_ratings (int, optional): Minimum number of ratings to filter by. Defaults to the dataset mean.
+            avg_rating (float, optional): Minimum average rating to filter by. Range from 0 to 5. Defaults to be 4.0, higher is better rating.
+            num_ratings (int, optional): Minimum number of ratings to filter by. Range from 0 to 100000. Defaults to be 500, higher is more popular rating.
             top_k (int, optional): Number of results to return. Defaults to 50.
                 
         Returns:

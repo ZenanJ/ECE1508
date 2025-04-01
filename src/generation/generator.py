@@ -2,17 +2,18 @@ import os
 from dotenv import load_dotenv
 from langchain_community.chat_models import ChatOllama
 from langchain_deepseek import ChatDeepSeek
+from langchain_openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.memory import ConversationBufferMemory
-from src.retrieval.retriever import Retriever
-from src.generation.prompt_templates import PromptTemplates
+from retrieval.retriever import Retriever
+from generation.prompt_templates import PromptTemplates
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain.tools import Tool
-from src.utils.config import DEEPSEEK_API_KEY, LOCAL_MODEL_NAME
+from utils.config import DEEPSEEK_API_KEY, LOCAL_MODEL_NAME, OPENAI_API_KEY
 
  
 class Generator:
-    def __init__(self, model_choice="remote"):
+    def __init__(self, model_choice="remote", llm_choice="deepseek"):
         
         # Load environment variables
         load_dotenv()
@@ -24,7 +25,10 @@ class Generator:
         if model_choice == "local":
             self.llm = ChatOllama(model=LOCAL_MODEL_NAME).bind_tools([retriever.search_movie])
         elif model_choice == "remote":
-            self.llm = ChatDeepSeek(model="deepseek-chat", api_key=DEEPSEEK_API_KEY)
+            if llm_choice == "deepseek":
+                self.llm = ChatDeepSeek(model="deepseek-chat", api_key=DEEPSEEK_API_KEY)
+            elif llm_choice == "openai":
+                self.llm = ChatOpenAI(model="gpt-4o", temperature=0, api_key=OPENAI_API_KEY)
         else:
             raise ValueError("model_choice must be either 'local' or 'remote'")
 
