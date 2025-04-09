@@ -44,7 +44,9 @@ python src/app.py --mode cli --model remote --llm openai
 ## Repository Structure
 ```
 ECE1508/
-│── movielens_data/                      # Directory for dataset storage
+│── evaluation/                 # evaluation method and test data
+│── images/                     # example images
+│── movielens_data/             # Directory for dataset storage
 │   ├── raw/                    # Raw MovieLens dataset files
 │   ├── processed/              # Preprocessed data and embeddings
 │── src/                        # Main source code
@@ -54,16 +56,12 @@ ECE1508/
 │   ├── generation/             # LLM-based response generation
 │   │   ├── prompt_templates.py # Define structured prompts for GPT-4o & DeepSeek-V3
 │   │   ├── generator.py        # Generate movie recommendations using LLM
+│   ├── utils/                  
+│   │   ├── config.py           # configuration file where load API key from .env file
 │   ├── app.py                  # Using Gradio build a chatbot interface
-│── test/                      # Unit and integration tests
+│── .env.sample                 # sample format for .env file
 │── requirements.txt            # Required dependencies
 │── README.md                   # Project documentation
-```
-
-## Testing
-Run unit tests with:
-```bash
-pytest tests/
 ```
 
 ## Examples
